@@ -15,23 +15,23 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
 
-# Global variable to store scraping status
+
 scraping_status = {"running": False, "progress": 0, "current_profile": "", "total": 0, "data": []}
 
 def setup_driver():
     print("Setting up Chrome driver with anti-detection features...")
     options = webdriver.ChromeOptions()
     
-    # Basic options
+   
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
     
-    # Anti-detection features
+    
     options.add_argument('--disable-blink-features=AutomationControlled')
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
     options.add_experimental_option('useAutomationExtension', False)
     
-    # Random user agents
+  
     user_agents = [
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36',
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36',
@@ -40,19 +40,19 @@ def setup_driver():
     ]
     options.add_argument(f'--user-agent={random.choice(user_agents)}')
     
-    # Window size randomization
+   
     window_sizes = ['--window-size=1920,1080', '--window-size=1366,768', '--window-size=1536,864']
     options.add_argument(random.choice(window_sizes))
     
-    # Additional stealth options
+   
     options.add_argument('--disable-extensions')
     options.add_argument('--disable-plugins')
     options.add_argument('--disable-images')
-    options.add_argument('--disable-javascript')  # Optional: for faster loading
+    options.add_argument('--disable-javascript') 
     
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
     
-    # Execute CDP commands to prevent detection
+ 
     driver.execute_cdp_cmd('Network.setUserAgentOverride', {
         "userAgent": random.choice(user_agents)
     })
@@ -72,7 +72,7 @@ def login_to_linkedin(driver, email, password):
     email_field = driver.find_element(By.ID, "username")
     password_field = driver.find_element(By.ID, "password")
     
-    # Type with human-like delays
+    
     for char in email:
         email_field.send_keys(char)
         time.sleep(random.uniform(0.1, 0.3))
@@ -87,9 +87,9 @@ def login_to_linkedin(driver, email, password):
     
     login_button = driver.find_element(By.XPATH, "//button[@type='submit']")
     login_button.click()
-    smart_delay(4, 7)  # Longer delay for login processing
+    smart_delay(4, 7)  
     
-    # Check if login was successful
+    
     if "feed" in driver.current_url or "dashboard" in driver.current_url:
         return True
     else:
@@ -102,9 +102,9 @@ def scrape_linkedin_profile(driver, profile_url, index, total):
         scraping_status["progress"] = int((index / total) * 100)
         
         driver.get(profile_url)
-        smart_delay(3, 6)  # Random delay between page loads
+        smart_delay(3, 6)  
         
-        # Extract data
+       
         name = driver.find_element(By.TAG_NAME, "h1").text
         
         try:
@@ -117,13 +117,13 @@ def scrape_linkedin_profile(driver, profile_url, index, total):
         except:
             about = "Not found"
             
-        # Try to get location
+       
         try:
             location = driver.find_element(By.XPATH, "//span[contains(@class, 'text-body-small')]").text
         except:
             location = "Not found"
         
-        # Try to get additional info
+   
         try:
             experience = driver.find_element(By.XPATH, "//section[contains(@class, 'experience')]").text[:300] + "..."
         except:
@@ -165,11 +165,11 @@ def scrape_profiles_async(profile_urls, email, password):
                 if profile_data:
                     scraped_data.append(profile_data)
                 
-                # Random delay between profiles (avoid pattern)
-                if i < len(profile_urls):  # No delay after last profile
+               
+                if i < len(profile_urls):  
                     smart_delay(2, 5)
             
-            # Save to CSV
+           
             if scraped_data:
                 df = pd.DataFrame(scraped_data)
                 filename = f'scraped_profiles_{datetime.now().strftime("%Y%m%d_%H%M%S")}.csv'
@@ -189,7 +189,7 @@ def scrape_profiles_async(profile_urls, email, password):
         driver.quit()
         scraping_status["running"] = False
 
-# Routes (remain the same as before)
+
 @app.route('/')
 def index():
     if 'linkedin_email' not in session:
@@ -227,7 +227,7 @@ def start_scraping():
     if not profile_urls:
         return jsonify({"error": "No URLs provided"})
     
-    # Start scraping in background thread
+  
     thread = threading.Thread(
         target=scrape_profiles_async, 
         args=(profile_urls, session['linkedin_email'], session['linkedin_password'])
