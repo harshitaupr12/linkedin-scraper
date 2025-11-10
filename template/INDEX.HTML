@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkedIn Scraper</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>LinkedIn Profile Scraper</h1>
+        
+        <div class="input-section">
+            <h3>Enter LinkedIn Profile URLs (one per line):</h3>
+            <textarea id="profileUrls" rows="10" placeholder="https://www.linkedin.com/in/sundarpichai/&#10;https://www.linkedin.com/in/satyanadella/&#10;..."></textarea>
+            <button onclick="startScraping()">Start Scraping</button>
+        </div>
+
+        <div id="progressSection" class="hidden">
+            <h3>Scraping Progress</h3>
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill"></div>
+            </div>
+            <p id="progressText">Preparing...</p>
+            <p id="currentProfile"></p>
+        </div>
+
+        <div id="resultSection" class="hidden">
+            <h3>Scraping Complete!</h3>
+            <p id="resultMessage"></p>
+            <button onclick="downloadCSV()">Download CSV</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
