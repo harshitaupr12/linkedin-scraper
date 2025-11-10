@@ -6,12 +6,10 @@ function startScraping() {
         alert('Please enter at least one LinkedIn profile URL');
         return;
     }
-
-    // Show progress section
+    
     document.getElementById('progressSection').classList.remove('hidden');
     document.getElementById('resultSection').classList.add('hidden');
     
-    // Start scraping
     fetch('/start_scraping', {
         method: 'POST',
         headers: {
@@ -25,7 +23,7 @@ function startScraping() {
             alert(data.error);
             return;
         }
-        // Start checking progress
+
         checkProgress();
     })
     .catch(error => {
@@ -43,10 +41,10 @@ function checkProgress() {
             document.getElementById('currentProfile').textContent = data.current_profile;
             
             if (data.running) {
-                // Continue checking every 2 seconds
+              
                 setTimeout(checkProgress, 2000);
             } else {
-                // Show result
+               
                 document.getElementById('resultMessage').textContent = data.message;
                 document.getElementById('resultSection').classList.remove('hidden');
                 
