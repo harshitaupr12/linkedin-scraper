@@ -29,10 +29,9 @@ python app.py
 
 4. Access Application
 Open browser and navigate to:
-http://localhost:5000
+http://localhost
 
 Usage 📖
-
 Login - Enter your LinkedIn credentials
 Add URLs - Paste LinkedIn profile URLs (one per line)
 Start Scraping - Click "Start Scraping" button
